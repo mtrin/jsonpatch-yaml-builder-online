@@ -1,1 +1,133 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>JSON Patch Builder Online</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.1/css/bulma.min.css">
+    <style type="">
+        .textarea
+    {
+        min-height: 250px !important;
+    }
+    </style>
+</head>
+
+<body>
+    <section class="section">
+        <div class="container">
+
+            <h1 class="title">JSON Patch Builder Online</h1>
+            <h2 class="subtitle">You can use this tool to calculate the JSON Patch (<a href="http://tools.ietf.org/html/rfc6902">RFC6902</a>)
+                needed to mutate a resource to a given state.</h2>
+
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Source (current state)</label>
+                        <div class="control">
+                            <textarea class="textarea" id="source" onfocus="this.select();">
+{
+    "Message":""
+}</textarea>
+                            <p class="help">Insert here how the Resource should be after apply the JSON Patch.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Target (desired state)</label>
+                        <div class="control">
+                            <textarea class="textarea" id="target" onfocus="this.select();">
+{
+    "Message":"Hello World!"
+}</textarea>
+                            <p class="help">Insert here the current representation where you want to apply the Patch.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="columns">
+                <div class="column">
+                    <a class="button is-primary is-fullwidth" id="build">Click to Build the Patch Document</a>
+                </div>
+            </div>
+            <article class="message is-warning" id="alert-panel" style="display:none;">
+                <div class="message-header">
+                    <p>Warning</p>
+                </div>
+                <div class="message-body" id="alert-panel-body">
+                </div>
+            </article>
+            <div class="columns">
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Json Patch Document</label>
+                        <div class="control">
+                            <textarea class="textarea" id="result" placeholder="Click the button to see the JSON Patch Result..." onfocus="this.select();"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+    </section>
+    <footer class="footer">
+        <div class="container">
+            <div class="content has-text-centered">
+                <p>
+                    <strong>Thanks</strong> to
+                    <a href="https://bulma.io">BULMA</a> and
+                    <a href="https://github.com/Starcounter-Jack/JSON-Patch">JSON-Patch</a> used to build this tool.
+                </p>
+
+                <p>
+                    The source code is licensed
+                    <a href="http://opensource.org/licenses/mit-license.php">under MIT</a> and you can find it at
+                    <a href="https://github.com/json-patch-builder-online/">GitHub</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fast-json-patch/2.0.6/fast-json-patch.min.js"></script>
+    <script>
+
+        var buildButton = document.getElementById('build');
+
+        buildButton.onclick = function () {
+            document.getElementById('alert-panel').style.display = 'none';
+
+            var targetDocument = getTextAsJson('target', 'Target');
+            var sourceDocument = getTextAsJson('source', 'Source');
+            var diff = jsonpatch.compare(sourceDocument, targetDocument);
+            document.getElementById('result').value = JSON.stringify(diff, null, 4);
+        };
+
+        function getTextAsJson(elementId, elementLabel) {
+            try {
+                return JSON.parse(document.getElementById(elementId).value);
+            } catch (e) {
+                document.getElementById('alert-panel-body').innerHTML = 'Error parsing <strong>' + elementLabel + '</strong> JSON.';
+                document.getElementById('alert-panel').style.display = 'block';
+            }
+        }
+
+    </script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-111869179-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-111869179-1');
+    </script>
+
+</body>
+
+</html>
